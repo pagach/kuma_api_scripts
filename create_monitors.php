@@ -1,18 +1,16 @@
 <?php
 
-// Fetch monitors
-
-$crmLoginUrl = "https://crm.shipshape-solutions.com/api/login";
+// LOGIN
+$url = "https://crm.shipshape-solutions.com/api/login";
 $postFields = [
     'username' => 'pinger',
     'password' => 'Pinger901!',
 ];
 
-$ch = curl_init($crmLoginUrl);
+$ch = curl_init($url);
 
 curl_setopt_array($ch, [
     CURLOPT_POST => true,
-    // kad CURLOPT_POSTFIELDS primi ARRAY, cURL automatski šalje multipart/form-data
     CURLOPT_POSTFIELDS => $postFields,
     CURLOPT_RETURNTRANSFER => true,
     CURLOPT_FOLLOWLOCATION => true,
@@ -20,81 +18,59 @@ curl_setopt_array($ch, [
     CURLOPT_HTTPHEADER => [
         'Accept: application/json',
     ],
-    // ako server koristi self-signed cert, po potrebi (privremeno) otkomentiraj sljedeću liniju:
-    // CURLOPT_SSL_VERIFYPEER  => false,
 ]);
 
-// Dodavanje opcije za praćenje preusmjeravanja
 curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true); // Ovo omogućava praćenje preusmjerenja
 
-// Izvršavanje zahtjeva i dobivanje odgovora
 $response = curl_exec($ch);
 
-// Provjera za greške u cURL zahtjevu
 if (curl_errno($ch)) {
     echo 'Curl error: '.curl_error($ch);
 }
 
-// Zatvaranje cURL sesije
 curl_close($ch);
 
-// Parsiranje JSON odgovora i dohvat tokena
 $response_data = json_decode($response, true);
-var_dump($response_data);
-die;
-if (isset($response_data['access_token'])) {
-    $token = $response_data['access_token'];
-    file_put_contents("token.txt", $token);
+if (isset($response_data['error']) && !$response_data['error']) {
+    $token = $response_data['data']['token'];
 } else {
-    echo "No access token found in the response.\n";
+    die("No access token found in the response.");
 }
 
-// URL za autentifikaciju
-$login_url = "http://127.0.0.1:8000/login/access-token/";
 
-// Korisničko ime i lozinka
-$username = "admin";
-$password = "admin";
+// GET MONITORS
+$url = "https://crm.shipshape-solutions.com/api/export_project_urls";
+$postFields = [
+    'token' => $token,
+];
 
-// Priprema podataka za POST zahtjev
-$data = http_build_query([
-    'username' => $username,
-    'password' => $password,
+$ch = curl_init($url);
+
+curl_setopt_array($ch, [
+    CURLOPT_POST => true,
+    CURLOPT_POSTFIELDS => $postFields,
+    CURLOPT_RETURNTRANSFER => true,
+    CURLOPT_FOLLOWLOCATION => true,
+    CURLOPT_TIMEOUT => 20,
+    CURLOPT_HTTPHEADER => [
+        'Accept: application/json',
+    ],
 ]);
 
-// Inicijalizacija cURL-a
-$ch = curl_init();
-
-// Postavljanje cURL opcija za zahtjev
-curl_setopt($ch, CURLOPT_URL, $login_url);
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($ch, CURLOPT_POST, true);
-curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-curl_setopt($ch, CURLOPT_HTTPHEADER, [
-    'Content-Type: application/x-www-form-urlencoded',
-]);
-
-// Dodavanje opcije za praćenje preusmjeravanja
 curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true); // Ovo omogućava praćenje preusmjerenja
 
-// Izvršavanje zahtjeva i dobivanje odgovora
 $response = curl_exec($ch);
 
-// Provjera za greške u cURL zahtjevu
 if (curl_errno($ch)) {
     echo 'Curl error: '.curl_error($ch);
 }
 
-// Zatvaranje cURL sesije
 curl_close($ch);
 
-// Parsiranje JSON odgovora i dohvat tokena
 $response_data = json_decode($response, true);
-if (isset($response_data['access_token'])) {
-    $token = $response_data['access_token'];
-    file_put_contents("token.txt", $token);
+var_dump($response_data);die;
+if (isset($response_data['error']) && !$response_data['error']) {
+    $token = $response_data['data']['token'];
 } else {
-    echo "No access token found in the response.\n";
+    die("No access token found in the response.");
 }
-
-?>

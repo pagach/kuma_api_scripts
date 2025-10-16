@@ -3,21 +3,25 @@
 // Fetch monitors
 
 $crmLoginUrl = "https://crm.shipshape-solutions.com/api/login";
-$username = "pinger";
-$password = "Pinger901!";
+$postFields = [
+    'username' => 'pinger',
+    'password' => 'Pinger901!',
+];
 
-$ch = curl_init();
+$ch = curl_init($crmLoginUrl);
 
-// Postavljanje cURL opcija za zahtjev
-curl_setopt($ch, CURLOPT_URL, $crmLoginUrl);
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($ch, CURLOPT_POST, true);
-curl_setopt($ch, CURLOPT_POSTFIELDS, [
-    'username' => $username,
-    'password' => $password,
-]);
-curl_setopt($ch, CURLOPT_HTTPHEADER, [
-    'Content-Type: application/x-www-form-urlencoded',
+curl_setopt_array($ch, [
+    CURLOPT_POST => true,
+    // kad CURLOPT_POSTFIELDS primi ARRAY, cURL automatski šalje multipart/form-data
+    CURLOPT_POSTFIELDS => $postFields,
+    CURLOPT_RETURNTRANSFER => true,
+    CURLOPT_FOLLOWLOCATION => true,
+    CURLOPT_TIMEOUT => 20,
+    CURLOPT_HTTPHEADER => [
+        'Accept: application/json',
+    ],
+    // ako server koristi self-signed cert, po potrebi (privremeno) otkomentiraj sljedeću liniju:
+    // CURLOPT_SSL_VERIFYPEER  => false,
 ]);
 
 // Dodavanje opcije za praćenje preusmjeravanja
@@ -28,7 +32,7 @@ $response = curl_exec($ch);
 
 // Provjera za greške u cURL zahtjevu
 if (curl_errno($ch)) {
-    echo 'Curl error: ' . curl_error($ch);
+    echo 'Curl error: '.curl_error($ch);
 }
 
 // Zatvaranje cURL sesije
@@ -36,7 +40,8 @@ curl_close($ch);
 
 // Parsiranje JSON odgovora i dohvat tokena
 $response_data = json_decode($response, true);
-var_dump($response_data);die;
+var_dump($response_data);
+die;
 if (isset($response_data['access_token'])) {
     $token = $response_data['access_token'];
     file_put_contents("token.txt", $token);
@@ -77,7 +82,7 @@ $response = curl_exec($ch);
 
 // Provjera za greške u cURL zahtjevu
 if (curl_errno($ch)) {
-    echo 'Curl error: ' . curl_error($ch);
+    echo 'Curl error: '.curl_error($ch);
 }
 
 // Zatvaranje cURL sesije

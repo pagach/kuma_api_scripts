@@ -68,9 +68,43 @@ if (curl_errno($ch)) {
 curl_close($ch);
 
 $response_data = json_decode($response, true);
-var_dump($response_data);die;
-if (isset($response_data['error']) && !$response_data['error']) {
-    $token = $response_data['data']['token'];
-} else {
-    die("No access token found in the response.");
+
+$urls = $response_data['data'];
+
+foreach ($urls as $url) {
+    createMonitor($url);
+}
+
+function createMonitor($url)
+{
+    $api_url = 'http://127.0.0.1:8000/monitors/';
+
+    $token = file_get_contents("token.txt"); // Zamijeni s pravim tokenom
+
+    $parse = parse_url($url);
+
+    $data = [
+        'type' => 'http',
+        'name' => $parse['host'],
+        'url' => $url,
+        'interval' => 60,
+    ];
+
+    $ch = curl_init($api_url);
+
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        'Accept: application/json',
+        'Authorization: Bearer '.$token,
+        'Content-Type: application/json',
+    ]);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+
+    if (curl_errno($ch)) {
+        echo 'cURL error: '.curl_error($ch);
+    }
+
+    curl_close($ch);
 }

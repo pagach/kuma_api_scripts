@@ -24,16 +24,14 @@ curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
 curl_setopt($ch, CURLOPT_HTTPHEADER, [
     'Content-Type: application/x-www-form-urlencoded',
 ]);
-
-// Dodavanje opcije za praćenje preusmjeravanja
-curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true); // Ovo omogućava praćenje preusmjerenja
+curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
 
 // Izvršavanje zahtjeva i dobivanje odgovora
 $response = curl_exec($ch);
 
 // Provjera za greške u cURL zahtjevu
 if (curl_errno($ch)) {
-    echo 'Curl error: ' . curl_error($ch);
+    echo 'Curl error: '.curl_error($ch);
 }
 
 // Zatvaranje cURL sesije
@@ -47,5 +45,3 @@ if (isset($response_data['access_token'])) {
 } else {
     echo "No access token found in the response.\n";
 }
-
-?>

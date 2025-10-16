@@ -82,7 +82,7 @@ function createMonitor($url)
     $token = file_get_contents("token.txt"); // Zamijeni s pravim tokenom
 
     $parse = parse_url($url);
-
+var_dump($parse);die;
     $data = [
         'type' => 'http',
         'name' => $parse['host'],

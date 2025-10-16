@@ -108,9 +108,13 @@ function createMonitor($url)
     curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
     curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
 
+    $response = curl_exec($ch);
+
     if (curl_errno($ch)) {
         echo 'cURL error: '.curl_error($ch);
     }
 
     curl_close($ch);
+
+    return true;
 }

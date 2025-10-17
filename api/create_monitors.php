@@ -176,5 +176,14 @@ function getKumaMonitors()
         $ret[] = $parse['host'];
     }
 
-    return $ret;
+    $ret = array_map('getBaseUrl', $ret);
+
+    return array_unique($ret);
+}
+
+function getBaseUrl($url)
+{
+    $parsedUrl = parse_url($url);
+
+    return $parsedUrl['scheme'].'://'.$parsedUrl['host'];
 }

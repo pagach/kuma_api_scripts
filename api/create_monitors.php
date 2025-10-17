@@ -178,6 +178,7 @@ function getKumaMonitors()
 
     $ret = array_map('getBaseUrl', $ret);
 
+    var_dump($ret);die;
     return array_unique($ret);
 }
 

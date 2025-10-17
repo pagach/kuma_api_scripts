@@ -41,7 +41,7 @@ curl_close($ch);
 $response_data = json_decode($response, true);
 if (isset($response_data['access_token'])) {
     $token = $response_data['access_token'];
-    file_put_contents("token.txt", $token);
+    file_put_contents(getcwd()."/token.txt", $token);
 } else {
     echo "No access token found in the response.\n";
 }

@@ -91,7 +91,7 @@ function createMonitor($url)
 
     $apiUrl = 'http://127.0.0.1:8000/monitors/';
 
-    $token = file_get_contents("token.txt"); // Zamijeni s pravim tokenom
+    $token = file_get_contents(getcwd()."/token.txt");
 
     $parse = parse_url($url);
 
@@ -135,7 +135,7 @@ function getKumaMonitors()
 {
     $apiUrl = 'http://127.0.0.1:8000/monitors/';
 
-    $token = file_get_contents("token.txt"); // Zamijeni s pravim tokenom
+    $token = file_get_contents(getcwd()."/token.txt");
 
     $ch = curl_init($apiUrl);
 

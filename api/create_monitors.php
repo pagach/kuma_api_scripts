@@ -71,6 +71,10 @@ $response_data = json_decode($response, true);
 
 $urls = $response_data['data'];
 
+$urls = array_map('getBaseUrl', $urls);
+
+$urls = array_filter(array_unique($urls));
+
 try {
     $existingMonitors = getKumaMonitors();
 

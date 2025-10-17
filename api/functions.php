@@ -63,6 +63,20 @@ function createMonitor($url)
         'name' => $parse['host'],
         'url' => $url,
         'interval' => 60,
+        'notification' => [
+            [
+                'type' => 'email',
+                'enabled' => true,
+                'name' => "$url Email Notification",
+                'hostname' => 'mail.shape-dev.com',
+                'port' => 587,
+                'security' => 'STARTTLS',
+                'username' => 'test@shape-dev.com',
+                'password' => 'F7ux0&umu3y11!',
+                'from_email' => 'test@shape-dev.com',
+                'to_email' => 'service@shipshape.hr',
+            ],
+        ],
     ];
 
     $ch = curl_init($apiUrl);

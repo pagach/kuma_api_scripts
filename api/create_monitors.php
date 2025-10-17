@@ -87,6 +87,8 @@ foreach ($urls as $url) {
 
 function createMonitor($url)
 {
+    echo "Creating $url \n";
+
     $apiUrl = 'http://127.0.0.1:8000/monitors/';
 
     $token = file_get_contents("token.txt"); // Zamijeni s pravim tokenom

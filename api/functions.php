@@ -142,7 +142,11 @@ function getKumaMonitors()
 
     $ret = array_map('getBaseUrlMonitors', $ret);
 
-    return array_filter(array_unique($ret));
+    $ret = array_filter($ret, function ($url) {
+        return !is_null($url); // Filtriraj null
+    });
+
+    return array_unique($ret);
 }
 
 function deleteMonitor($id, $url)

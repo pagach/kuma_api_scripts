@@ -49,5 +49,3 @@ function login()
         echo "No access token found in the response.\n";
     }
 }
-
-login();

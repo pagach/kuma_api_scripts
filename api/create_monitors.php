@@ -94,6 +94,7 @@ try {
 
         if (!in_array($fullUrl, $existingMonitors)) {
             createMonitor($fullUrl);
+            sleep(2);
         } else {
             $existingMonitors = array_diff($existingMonitors, [$fullUrl]);
         }
@@ -103,6 +104,7 @@ try {
         // ima viska monitora
         foreach ($existingMonitors as $existingMonitor) {
             deleteMonitor($existingMonitor["id"], $existingMonitor["url"]);
+            sleep(2);
         }
     }
 } catch (Exception $e) {

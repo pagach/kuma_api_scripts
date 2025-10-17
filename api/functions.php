@@ -146,6 +146,7 @@ function getKumaMonitors()
         return !is_null($url); // Filtriraj null
     });
 
+    var_dump($ret);
     return array_unique($ret);
 }
 

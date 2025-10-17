@@ -71,13 +71,15 @@ $response_data = json_decode($response, true);
 
 $urls = $response_data['data'];
 
+getKumaMonitors();
+
 foreach ($urls as $url) {
     createMonitor($url);
 }
 
 function createMonitor($url)
 {
-    $api_url = 'http://127.0.0.1:8000/monitors/';
+    $apiUrl = 'http://127.0.0.1:8000/monitors/';
 
     $token = file_get_contents("token.txt"); // Zamijeni s pravim tokenom
 
@@ -96,7 +98,7 @@ function createMonitor($url)
         'interval' => 60,
     ];
 
-    $ch = curl_init($api_url);
+    $ch = curl_init($apiUrl);
 
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_POST, true);
@@ -110,6 +112,36 @@ function createMonitor($url)
 
     $response = curl_exec($ch);
 
+    if (curl_errno($ch)) {
+        echo 'cURL error: '.curl_error($ch);
+    }
+
+    curl_close($ch);
+
+    return true;
+}
+
+function getKumaMonitors()
+{
+    $apiUrl = 'http://127.0.0.1:8000/monitors/';
+
+    $token = file_get_contents("token.txt"); // Zamijeni s pravim tokenom
+
+    $ch = curl_init($apiUrl);
+
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+//    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        'Accept: application/json',
+        'Authorization: Bearer '.$token,
+        'Content-Type: application/json',
+    ]);
+//    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+
+    $response = curl_exec($ch);
+    var_dump($response);
+    die;
     if (curl_errno($ch)) {
         echo 'cURL error: '.curl_error($ch);
     }

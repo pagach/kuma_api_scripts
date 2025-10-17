@@ -1,0 +1,30 @@
+version: "3.9"
+services:
+  kuma:
+    container_name: uptimekuma
+    image: louislam/uptime-kuma:latest
+    ports:
+      - "3001:3001"
+    restart: always
+    volumes:
+      - uptime-kuma:/app/data
+
+  api:
+    container_name: uptimekuma_restapi
+    image: medaziz11/uptimekuma_restapi
+    volumes:
+      - api:/db
+    restart: always
+    environment:
+      - KUMA_SERVER=https://kuma.shape-dev.com
+      - KUMA_USERNAME=admin
+      - KUMA_PASSWORD=Admin123!
+      - ADMIN_PASSWORD=admin
+    depends_on:
+      - kuma
+    ports:
+      - "8000:8000"
+
+volumes:
+  uptime-kuma:
+  api:

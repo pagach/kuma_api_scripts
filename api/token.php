@@ -1,5 +1,7 @@
 <?php
 
+//https://github.com/MedAziz11/Uptime-Kuma-Web-API
+
 // URL za autentifikaciju
 $login_url = "http://127.0.0.1:8000/login/access-token/";
 

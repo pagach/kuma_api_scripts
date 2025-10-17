@@ -146,6 +146,8 @@ function getKumaMonitors()
 
     curl_close($ch);
 
+    $response = json_decode($response, true);
+
     if (empty($response["monitors"])) {
         return [];
     }

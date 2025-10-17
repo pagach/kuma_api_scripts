@@ -80,7 +80,9 @@ $urls = array_filter(array_unique($urls));
 
 try {
     $existingMonitors = getKumaMonitors();
-
+    if(!empty($existingMonitors)){
+        $existingMonitors = array_column($existingMonitors, 'url');
+    }
     foreach ($urls as $url) {
         $parsedUrl = parse_url($url);
 

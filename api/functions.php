@@ -140,14 +140,7 @@ function getKumaMonitors()
         ];
     }
 
-    $ret = array_map('getBaseUrlMonitors', $ret);
-
-    $ret = array_filter($ret, function ($url) {
-        return !is_null($url); // Filtriraj null
-    });
-
-    var_dump($ret);
-    return array_unique($ret);
+    return array_map('getBaseUrlMonitors', $ret);
 }
 
 function deleteMonitor($id, $url)

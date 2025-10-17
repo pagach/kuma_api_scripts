@@ -193,5 +193,11 @@ function getBaseUrl($url)
 {
     $parsedUrl = parse_url($url);
 
+    if (empty($parsedUrl['host'])) {
+        var_dump($url);
+        var_dump($parsedUrl);
+        die;
+    }
+
     return $parsedUrl['scheme'].'://'.$parsedUrl['host'];
 }

@@ -75,14 +75,14 @@ try {
     $existingMonitors = getKumaMonitors();
 
     foreach ($urls as $url) {
-        $parse = parse_url($url);
+        $parsedUrl = parse_url($url);
 
-        if (empty($parse['host'])) {
+        if (empty($parsedUrl['host'])) {
             continue;
         }
 
-        if (!in_array($parse['host'], $existingMonitors)) {
-            createMonitor($url);
+        if (!in_array($parsedUrl['scheme'].'://'.$parsedUrl['host'], $existingMonitors)) {
+            createMonitor($parsedUrl['scheme'].'://'.$parsedUrl['host']);
         }
     }
 } catch (Exception $e) {

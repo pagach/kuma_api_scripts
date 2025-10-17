@@ -1,5 +1,9 @@
 <?php
 
+include __DIR__."/token.php";
+include __DIR__."/delete_monitors.php";
+login();
+
 // LOGIN
 $url = "https://crm.shipshape-solutions.com/api/login";
 $postFields = [
@@ -85,8 +89,19 @@ try {
             continue;
         }
 
-        if (!in_array($parsedUrl['scheme'].'://'.$parsedUrl['host'], $existingMonitors)) {
-            createMonitor($parsedUrl['scheme'].'://'.$parsedUrl['host']);
+        $fullUrl = $parsedUrl['scheme'].'://'.$parsedUrl['host'];
+
+        if (!in_array($fullUrl, $existingMonitors)) {
+            createMonitor($fullUrl);
+        } else {
+            $existingMonitors = array_diff($existingMonitors, [$fullUrl]);
+        }
+    }
+
+    if (!empty($existingMonitors)) {
+        // ima viska monitora
+        foreach ($existingMonitors as $existingMonitor) {
+            deleteMonitor($existingMonitor["id"], $existingMonitor["url"]);
         }
     }
 } catch (Exception $e) {
@@ -185,7 +200,11 @@ function getKumaMonitors()
         if (empty($parse['host'])) {
             continue;
         }
-        $ret[] = $parse['host'];
+
+        $ret[] = [
+            "id" => $monitor["id"],
+            "url" => $parse['host'],
+        ];
     }
 
     $ret = array_map('getBaseUrl', $ret);
@@ -193,8 +212,10 @@ function getKumaMonitors()
     return array_filter(array_unique($ret));
 }
 
-function getBaseUrl($url)
+function getBaseUrl($monitory)
 {
+    $url = $monitory["url"];
+
     $parsedUrl = parse_url($url);
 
     if (empty($parsedUrl['host']) && !str_starts_with($url, 'http')) {
@@ -205,5 +226,7 @@ function getBaseUrl($url)
         return null;
     }
 
-    return $parsedUrl['scheme'].'://'.$parsedUrl['host'];
+    $monitory["url"] = $parsedUrl['scheme'].'://'.$parsedUrl['host'];
+
+    return $monitory;
 }

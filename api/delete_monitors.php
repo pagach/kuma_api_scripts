@@ -1,5 +1,8 @@
 <?php
 
+include __DIR__."/token.php";
+login();
+
 try {
     $existingMonitors = getKumaMonitors();
 

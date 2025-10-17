@@ -71,8 +71,9 @@ $response_data = json_decode($response, true);
 
 $urls = $response_data['data'];
 
-getKumaMonitors();
-
+$existingMonitors = getKumaMonitors();
+var_dump($existingMonitors);
+die;
 foreach ($urls as $url) {
     createMonitor($url);
 }
@@ -130,23 +131,30 @@ function getKumaMonitors()
     $ch = curl_init($apiUrl);
 
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-//    curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch, CURLOPT_HTTPHEADER, [
         'Accept: application/json',
         'Authorization: Bearer '.$token,
         'Content-Type: application/json',
     ]);
-//    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
     curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
 
     $response = curl_exec($ch);
-    var_dump($response);
-    die;
+
     if (curl_errno($ch)) {
-        echo 'cURL error: '.curl_error($ch);
+        throw new \Exception('cURL error: '.curl_error($ch));
     }
 
     curl_close($ch);
 
-    return true;
+    if (empty($response["monitors"])) {
+        return [];
+    }
+
+    $ret = [];
+
+    foreach ($response["monitors"] as $monitor) {
+        $ret[] = $monitor["url"];
+    }
+
+    return $ret;
 }

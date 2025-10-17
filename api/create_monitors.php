@@ -186,17 +186,19 @@ function getKumaMonitors()
 
     $ret = array_map('getBaseUrl', $ret);
 
-    return array_unique($ret);
+    return array_filter(array_unique($ret));
 }
 
 function getBaseUrl($url)
 {
     $parsedUrl = parse_url($url);
 
+    if (empty($parsedUrl['host']) && !str_starts_with($url, 'http')) {
+        $parsedUrl = parse_url("https://$url");
+    }
+
     if (empty($parsedUrl['host'])) {
-        var_dump($url);
-        var_dump($parsedUrl);
-        die;
+        return null;
     }
 
     return $parsedUrl['scheme'].'://'.$parsedUrl['host'];

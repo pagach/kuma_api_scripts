@@ -140,7 +140,7 @@ function getKumaMonitors()
         ];
     }
 
-    $ret = array_map('getBaseUrl', $ret);
+    $ret = array_map('getBaseUrlMonitors', $ret);
 
     return array_filter(array_unique($ret));
 }
@@ -175,9 +175,9 @@ function deleteMonitor($id, $url)
     return true;
 }
 
-function getBaseUrl($monitory)
+function getBaseUrlMonitors($monitor)
 {
-    $url = $monitory["url"];
+    $url = $monitor["url"];
 
     $parsedUrl = parse_url($url);
 
@@ -189,7 +189,22 @@ function getBaseUrl($monitory)
         return null;
     }
 
-    $monitory["url"] = $parsedUrl['scheme'].'://'.$parsedUrl['host'];
+    $monitor["url"] = $parsedUrl['scheme'].'://'.$parsedUrl['host'];
 
-    return $monitory;
+    return $monitor;
+}
+
+function getBaseUrl($url)
+{
+    $parsedUrl = parse_url($url);
+
+    if (empty($parsedUrl['host']) && !str_starts_with($url, 'http')) {
+        $parsedUrl = parse_url("https://$url");
+    }
+
+    if (empty($parsedUrl['host'])) {
+        return null;
+    }
+
+    return $url;
 }

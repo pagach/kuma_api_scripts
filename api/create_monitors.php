@@ -72,10 +72,17 @@ $response_data = json_decode($response, true);
 $urls = $response_data['data'];
 
 $existingMonitors = getKumaMonitors();
-var_dump($existingMonitors);
-die;
+
 foreach ($urls as $url) {
-    createMonitor($url);
+    $parse = parse_url($url);
+
+    if (empty($parse['host'])) {
+        continue;
+    }
+
+    if (!in_array($parse['host'], $existingMonitors)) {
+        createMonitor($url);
+    }
 }
 
 function createMonitor($url)
@@ -155,7 +162,16 @@ function getKumaMonitors()
     $ret = [];
 
     foreach ($response["monitors"] as $monitor) {
-        $ret[] = $monitor["url"];
+        if (empty($monitor["url"])) {
+            continue;
+        }
+
+        $parse = parse_url($monitor["url"]);
+
+        if (empty($parse['host'])) {
+            continue;
+        }
+        $ret[] = $parse['host'];
     }
 
     return $ret;

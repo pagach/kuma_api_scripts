@@ -162,6 +162,9 @@ function getKumaMonitors()
 
     $response = json_decode($response, true);
 
+    if (empty($response["monitors"]) && !empty($response["detail"])) {
+        throw new \Exception('API error: '.$response["detail"]);
+    }
     if (empty($response["monitors"])) {
         return [];
     }
@@ -182,10 +185,6 @@ function getKumaMonitors()
     }
 
     $ret = array_map('getBaseUrl', $ret);
-
-    var_dump("aa");
-//    var_dump($ret);
-    die;
 
     return array_unique($ret);
 }
